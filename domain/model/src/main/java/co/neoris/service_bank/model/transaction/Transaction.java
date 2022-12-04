@@ -3,6 +3,7 @@ package co.neoris.service_bank.model.transaction;
 import co.neoris.service_bank.model.account.Account;
 import co.neoris.service_bank.model.exception.ValidationDataException;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class Transaction {
     private BigDecimal value;
     private BigDecimal initialValue;

@@ -24,10 +24,7 @@ public class ClientHandler {
 
     public Mono<ServerResponse> createClient(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(ClientRequest.class)
-                .map(request ->
-                        new User(request.getCompleteName(), request.getGender(), request.getBirthDate(),
-                                request.getIdentification(), request.getAddress(), request.getPhoneNumber(),
-                                request.getPassword()))
+                .map(this::buildUser)
                 .flatMap(this.createUserUseCase::createUser)
                 .flatMap(user -> ServerResponse.ok().bodyValue(user))
                 .onErrorResume(throwable -> {

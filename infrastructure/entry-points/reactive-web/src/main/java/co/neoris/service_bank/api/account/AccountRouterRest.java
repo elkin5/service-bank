@@ -1,6 +1,5 @@
-package co.neoris.service_bank.api.client;
+package co.neoris.service_bank.api.account;
 
-import org.springframework.boot.context.properties.bind.Name;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -13,14 +12,14 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
-public class ClientRouterRest {
-    private static final String BASE_URL = "/api/clientes";
+public class AccountRouterRest {
+    private static final String BASE_URL = "/api/cuentas";
 
-    @Bean("ClientRouterRest")
-    public RouterFunction<ServerResponse> routerFunction(ClientHandler clientHandler) {
-        return route(GET(BASE_URL), clientHandler::findByIdentification)
-                .andRoute(POST(BASE_URL), clientHandler::createClient)
-                .and(route(PUT(BASE_URL), clientHandler::updateClient))
-                .and(route(DELETE(BASE_URL), clientHandler::deleteClient));
+    @Bean(name = "AccountRouterRest")
+    public RouterFunction<ServerResponse> routerFunction(AccountHandler accountHandler) {
+        return route(GET(BASE_URL), accountHandler::findByIdentification)
+                .andRoute(POST(BASE_URL), accountHandler::createAccount)
+                .and(route(PUT(BASE_URL), accountHandler::updateAccount))
+                .and(route(DELETE(BASE_URL), accountHandler::deleteAccount));
     }
 }

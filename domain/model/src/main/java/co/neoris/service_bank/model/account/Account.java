@@ -1,34 +1,40 @@
 package co.neoris.service_bank.model.account;
 
 import co.neoris.service_bank.model.exception.ValidationDataException;
-import co.neoris.service_bank.model.user.User;
-import lombok.Builder;
+import co.neoris.service_bank.model.person.Person;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class Account {
+    private Long id;
     private Long number;
     private AccountType type;
     private BigDecimal balance;
+    private BigDecimal initialValue;
     private Boolean state;
-    private User user;
+    private Person person;
 
-    public Account(Long number, String type, BigDecimal balance, Boolean state, User user) {
-        this.validateData(type);
+    public Account(String number, String type, String initialValue, String identification) {
+        this.validateObligatoryData(number, type, initialValue, identification);
 
-        this.number = number;
+        this.id = null;
+        this.number = convertToLong(number);
         this.type = type.equalsIgnoreCase("ahorro") ? AccountType.AHORRO : AccountType.CORRIENTE;
-        this.balance = balance;
-        this.state = state;
-        this.user = user;
+        this.balance = convertToBigDecimal(initialValue);
+        this.initialValue = convertToBigDecimal(initialValue);
+        this.state = true;
+        this.person = new Person();
+        this.person.setIdentification(convertToLong(identification));
     }
 
-    private void validateData(String type) {
-        if (this.number == null) {
+    private void validateObligatoryData(String number, String type, String balance, String identification) {
+        if (number == null || number.isEmpty()) {
             throw new ValidationDataException("Numero de cuenta obligatorio");
         }
 
@@ -36,12 +42,34 @@ public class Account {
             throw new ValidationDataException("Tipo de cuenta obligatorio");
         }
 
+        if (balance == null || balance.isEmpty()) {
+            throw new ValidationDataException("Valor inicial de cuenta obligatorio");
+        }
+
         if (!type.equalsIgnoreCase("Ahorro") && !type.equalsIgnoreCase("Corriente")) {
             throw new ValidationDataException("Tipo de cuenta errado");
         }
 
-        if (balance.compareTo(BigDecimal.ZERO) < 0) {
+        if (identification == null || identification.isEmpty()) {
+            throw new ValidationDataException("Se requiere identificación de usuario");
+        }
+    }
+
+    private BigDecimal convertToBigDecimal(String value) {
+        Long valueLong = convertToLong(value);
+
+        if (valueLong.compareTo(0L) < 0) {
             throw new ValidationDataException("Valor inicial no puede ser menor a cero");
+        }
+
+        return BigDecimal.valueOf(valueLong);
+    }
+
+    private Long convertToLong(String value) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException nfe) {
+            throw new ValidationDataException("Valor en formato invalido");
         }
     }
 
