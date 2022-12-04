@@ -4,5 +4,9 @@ import co.neoris.service_bank.model.person.Person;
 import reactor.core.publisher.Mono;
 
 public interface PersonRepository {
-    Mono<Person> createUser(Person person);
+    Mono<Person> createPerson(Person person);
+
+    Mono<Person> findPersonByIdentification(Long identification);
+
+    Mono<Void> deletePersonById(Long identifier);
 }

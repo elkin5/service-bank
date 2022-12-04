@@ -2,27 +2,30 @@ package co.neoris.service_bank.model.person;
 
 import co.neoris.service_bank.model.exception.ValidationDataException;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 @Getter
 @Setter
-@SuperBuilder
+@NoArgsConstructor
 public class Person {
+    private Long personId;
+    private Long identification;
     private String completeName;
     private Gender gender;
     private LocalDate birthDate;
-    private Long identification;
     private String address;
     private Long phoneNumber;
+    private Integer years;
 
     public Person(String completeName, String gender, String birthDate, String identification,
                   String address, String phoneNumber) {
-        this.validateData(gender);
+        this.validateData(completeName, phoneNumber, gender, identification);
 
         this.completeName = completeName;
         this.gender = Gender.valueOf(gender.toUpperCase());
@@ -32,26 +35,26 @@ public class Person {
         this.phoneNumber = this.convertToLong(phoneNumber);
     }
 
-    public void validateData(String gender) {
-        if (this.completeName == null || this.completeName.isEmpty()) {
+    private void validateData(String completeName, String phoneNumber, String gender, String identification) {
+        if (completeName == null || completeName.isEmpty()) {
             throw new ValidationDataException("Nombre obligatorio");
-        }
-
-        if (this.phoneNumber == null) {
-            throw new ValidationDataException("Numero de teléfono obligatorio");
         }
 
         if (gender == null || gender.isEmpty()) {
-            throw new ValidationDataException("Nombre obligatorio");
-        }
-
-        if (this.identification == null) {
-            throw new ValidationDataException("Numero de teléfono obligatorio");
+            throw new ValidationDataException("Genero obligatorio");
         }
 
         if (!gender.equalsIgnoreCase("M") && !gender.equalsIgnoreCase("F")
                 && !gender.equalsIgnoreCase("O")) {
-            throw new ValidationDataException("Tipo de cuenta errado");
+            throw new ValidationDataException("Genero no disponible");
+        }
+
+        if (phoneNumber == null) {
+            throw new ValidationDataException("Numero de teléfono obligatorio");
+        }
+
+        if (identification == null) {
+            throw new ValidationDataException("Identificación obligatoria");
         }
     }
 
@@ -65,10 +68,15 @@ public class Person {
 
     private LocalDate convertToLocalDate(String value) {
         try {
-            return LocalDate.parse(value, DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+            return LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE);
         } catch (DateTimeParseException ex) {
             throw new ValidationDataException("Fecha en formato invalido");
         }
+    }
+
+    public Integer getYears() {
+        Period age = Period.between(this.birthDate, LocalDate.now());
+        return age.getYears();
     }
 
     public enum Gender {

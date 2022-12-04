@@ -1,4 +1,4 @@
-package co.neoris.service_bank.usecase.createtransaction;
+package co.neoris.service_bank.usecase.transaction;
 
 import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor

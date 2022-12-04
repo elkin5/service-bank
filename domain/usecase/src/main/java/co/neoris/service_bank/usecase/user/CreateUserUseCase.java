@@ -1,4 +1,4 @@
-package co.neoris.service_bank.usecase.createuser;
+package co.neoris.service_bank.usecase.user;
 
 import co.neoris.service_bank.model.person.gateways.PersonRepository;
 import co.neoris.service_bank.model.user.User;
@@ -12,8 +12,13 @@ public class CreateUserUseCase {
     private final UserRepository userRepository;
 
     public Mono<User> createUser(User user) {
-        return this.personRepository.createUser(user)
-                .flatMap(person -> this.userRepository.createUser(user))
-                .thenReturn(user);
+        return this.personRepository.createPerson(user)
+                .flatMap(person -> this.userRepository.createUser(user, person)
+                        .map(newUser -> {
+                            user.setPersonId(person.getPersonId());
+                            user.setUserId(newUser.getUserId());
+                            return user;
+                        })
+                );
     }
 }

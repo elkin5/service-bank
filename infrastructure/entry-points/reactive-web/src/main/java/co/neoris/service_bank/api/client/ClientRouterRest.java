@@ -11,10 +11,12 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 
 @Configuration
 public class ClientRouterRest {
+    private static final String BASE_URL = "/api/clientes";
     @Bean
     public RouterFunction<ServerResponse> routerFunction(ClientHandler clientHandler) {
-        return route(GET("/api/clientes"), clientHandler::listenGETUseCase)
-                .andRoute(POST("/api/clientes"), clientHandler::createClient)
-                .and(route(PUT("/api/clientes"), clientHandler::listenGETOtherUseCase));
+        return route(GET(BASE_URL), clientHandler::findByIdentification)
+                .andRoute(POST(BASE_URL), clientHandler::createClient)
+                .and(route(PUT(BASE_URL), clientHandler::updateClient))
+                .and(route(DELETE(BASE_URL), clientHandler::deleteClient));
     }
 }

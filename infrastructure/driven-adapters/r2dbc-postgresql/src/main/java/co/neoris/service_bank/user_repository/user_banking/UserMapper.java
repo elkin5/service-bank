@@ -1,13 +1,21 @@
 package co.neoris.service_bank.user_repository.user_banking;
 
+import co.neoris.service_bank.model.person.Person;
 import co.neoris.service_bank.model.user.User;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.springframework.stereotype.Service;
 
-@Mapper(componentModel = "spring")
-public interface UserMapper {
-    UserBankingDAO toDAO(User user);
+@Service
+public class UserMapper {
+    public UserBankingDAO toDAO(User user, Person person) {
+        return new UserBankingDAO(user.getUserId(), user.getPassword(), user.getState(), person.getPersonId());
+    }
 
-//    @Mapping(target = "id", ignore = true)
-    User toModel(UserBankingDAO userBankingDAO);
+    public User toModel(UserBankingDAO userBankingDAO) {
+        User newUser = new User();
+        newUser.setUserId(userBankingDAO.getId());
+        newUser.setPassword(userBankingDAO.getUserPassword());
+        newUser.setState(userBankingDAO.getState());
+
+        return newUser;
+    }
 }
