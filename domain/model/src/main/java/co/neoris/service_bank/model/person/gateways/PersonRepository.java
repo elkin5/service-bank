@@ -9,4 +9,6 @@ public interface PersonRepository {
     Mono<Person> findPersonByIdentification(Long identification);
 
     Mono<Void> deletePersonById(Long identifier);
+
+    Mono<Person> findPersonById(Long identifier);
 }

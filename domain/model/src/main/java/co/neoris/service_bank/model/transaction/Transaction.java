@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class Transaction {
+    private Long id;
     private BigDecimal value;
     private BigDecimal initialValue;
     private BigDecimal endingValue;
@@ -20,24 +21,52 @@ public class Transaction {
     private LocalDateTime createdAt;
     private Account account;
 
-    public Transaction(BigDecimal value, BigDecimal initialValue, BigDecimal endingValue, String type, Account account) {
-        this.validateData(type);
+    public Transaction(String value, String type, String accountNumber) {
+        this.validateObligatoryData(value, type, accountNumber);
 
-        this.value = value;
-        this.initialValue = initialValue;
-        this.endingValue = endingValue;
+        this.id = null;
+        this.value = convertToBigDecimal(value);
+        this.initialValue = null;
+        this.endingValue = null;
         this.type = type.equalsIgnoreCase("Retiro") ? TransactionType.RETIRO : TransactionType.DEPOSITO;
         this.createdAt = LocalDateTime.now();
-        this.account = account;
+        this.account = new Account();
+        this.account.setNumber(convertToLong(accountNumber));
     }
 
-    public void validateData(String type) {
-        if (value.compareTo(initialValue) > 0) {
-            throw new ValidationDataException("Monto invalido: el monto a retirar debe ser mayor al disponible");
+    public void validateObligatoryData(String value, String type, String accountNumber) {
+        if (value == null || value.isEmpty()) {
+            throw new ValidationDataException("Valor de trasferencia es obligatorio");
+        }
+
+        if (type == null || type.isEmpty()) {
+            throw new ValidationDataException("Tipo de cuenta obligatorio");
         }
 
         if (!type.equalsIgnoreCase("Retiro") && !type.equalsIgnoreCase("Deposito")) {
             throw new ValidationDataException("Tipo de movimiento errado");
+        }
+
+        if (accountNumber == null || accountNumber.isEmpty()) {
+            throw new ValidationDataException("Valor inicial de cuenta obligatorio");
+        }
+    }
+
+    private BigDecimal convertToBigDecimal(String value) {
+        Long valueLong = convertToLong(value);
+
+        if (valueLong.compareTo(0L) < 0) {
+            throw new ValidationDataException("Valor no puede ser menor a cero");
+        }
+
+        return BigDecimal.valueOf(valueLong);
+    }
+
+    private Long convertToLong(String value) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException nfe) {
+            throw new ValidationDataException("Valor en formato invalido");
         }
     }
 

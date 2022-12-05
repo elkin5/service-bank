@@ -5,4 +5,6 @@ import reactor.core.publisher.Mono;
 
 public interface AccountRepository {
     Mono<Account> createAccount(Account account);
+
+    Mono<Account> findAccountByNumber(Long accountNumber);
 }

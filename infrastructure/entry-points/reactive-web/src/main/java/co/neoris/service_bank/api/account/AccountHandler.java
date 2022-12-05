@@ -26,7 +26,7 @@ public class AccountHandler {
                 .map(request -> new Account(request.getNumber(), request.getType(), request.getInitialValue(),
                         request.getIdentification()))
                 .flatMap(this.createAccountUseCase::createAccount)
-                .flatMap(user -> ServerResponse.ok().bodyValue(user))
+                .flatMap(account -> ServerResponse.ok().bodyValue(account))
                 .onErrorResume(throwable -> {
                     log.error(throwable.getMessage());
                     throwable.printStackTrace();

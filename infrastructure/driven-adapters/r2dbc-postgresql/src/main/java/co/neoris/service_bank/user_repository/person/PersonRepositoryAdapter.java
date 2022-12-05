@@ -39,4 +39,10 @@ public class PersonRepositoryAdapter implements PersonRepository {
     public Mono<Void> deletePersonById(Long identifier) {
         return this.personDAORepository.deleteById(identifier);
     }
+
+    @Override
+    public Mono<Person> findPersonById(Long identifier) {
+        return personDAORepository.findById(identifier)
+                .map(this.personMapper::toModel);
+    }
 }
