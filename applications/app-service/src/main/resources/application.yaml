@@ -12,10 +12,10 @@ spring:
   profiles:
     include: null
   r2bdc-postgres:
-    host: "localhost"
+    host: "postgres-neoris"
     username: "admin"
     password: "123"
-    database: "saf"
+    database: "neoris"
     schema: "servicebank"
     port: 5432
 management:
